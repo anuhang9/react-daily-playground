@@ -1,15 +1,4 @@
-import type { RefObject } from "react";
-
-interface Position {
-  x: number,
-  y: number
-}
-interface PropsHome {
-  position: Position,
-  handleMouseDown: (evt: React.MouseEvent<HTMLDivElement>)=>void,
-  stickyDivRef: RefObject<HTMLDivElement  | null>
-}
-export const Card = ({position, handleMouseDown, stickyDivRef}:PropsHome) => {
+export const Card = ({position, handleMouseDown, stickyDivRef}) => {
   return (
     <div
       className="m-4 bg-red-400 rounded-t-md w-52"

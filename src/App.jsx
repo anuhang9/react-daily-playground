@@ -1,96 +1,17 @@
-import { Card } from "./components/card";
-import { ColorGroup } from "./components/color-group";
-import { useRef, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { StickyNote } from "./pages/sticky-note";
+import { MainLayout } from "./layouts/main-layout";
 
 const App = () => {
-  const [position, setPosition] = useState({ x: 10, y: 10 });
-  const divPosition = useRef({ x: 0, y: 0 });
-  const stickyDivRef = useRef(null);
-  const parentDiv = useRef(null);
-
-  const handleMouseDown = (evt) => {
-    if (!stickyDivRef.current) return;
-    const stickyRect = stickyDivRef.current.getBoundingClientRect();
-
-    const headerHight = 26;
-
-    const draggablePart =
-      evt.clientY >= stickyRect.top &&
-      evt.clientY <= stickyRect.top + headerHight;
-
-    if (draggablePart) {
-      divPosition.current = {
-        x: evt.clientX - position.x,
-        y: evt.clientY - position.y,
-      };
-      if (stickyDivRef.current) {
-        stickyDivRef.current.style.cursor = "grab";
-      }
-
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-    }
-  };
-
-  const handleMouseMove = (evt) => {
-    if (!parentDiv.current || !stickyDivRef.current) return;
-
-    const parentRect = parentDiv.current.getBoundingClientRect();
-    const stickyRect = stickyDivRef.current.getBoundingClientRect();
-
-    // Get raw position
-    let newX = evt.clientX - divPosition.current.x;
-    let newY = evt.clientY - divPosition.current.y;
-
-    const marginX = 16;
-    const marginY = 16;
-    // Clamp to parent edges
-    newX = Math.max(
-      -marginX,
-      Math.min(newX, parentRect.width - stickyRect.width - marginX)
-    );
-    newY = Math.max(
-      -marginY,
-      Math.min(newY, parentRect.height - stickyRect.height - marginY)
-    );
-
-    setPosition({
-      x: newX,
-      y: newY,
-    });
-  };
-
-  const handleMouseUp = () => {
-    if (stickyDivRef.current) {
-      stickyDivRef.current.style.cursor = "auto";
-    }
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-  };
-
-  // useEffect(() => {
-  //   return () => {
-  //     document.removeEventListener("mousemove", handleMouseMove);
-  //     document.removeEventListener("mouseup", handleMouseUp);
-  //   };
-  // }, []);
-
   return (
-    <div className="absolute top-0 z-[-2] gap-10 p-10 min-h-screen w-full bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px] flex items-center justify-center">
-      <div className=" w-32 flex items-center">
-        <ColorGroup />
-      </div>
-      <div
-        ref={parentDiv}
-        className=" w-[calc(100vw-128px)] h-[calc(100vh-80px)] relative"
-      >
-        <Card
-          position={position}
-          stickyDivRef={stickyDivRef}
-          handleMouseDown={handleMouseDown}
-        />
-      </div>
-    </div>
+    <BrowserRouter>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<h1 className="h-screen" />} />
+          <Route path="/sticky-note" element={<StickyNote />} />
+        </Routes>
+      </MainLayout>
+    </BrowserRouter>
   );
 };
 
